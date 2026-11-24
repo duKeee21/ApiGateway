@@ -4,6 +4,22 @@ server:
 spring:
   application:
     name: api-gateway
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: api-gateway
+            client-secret: XauxKJbHxqEHoYjC07Ct44DiOqN89zoO
+            scope: openid,profile,email
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8180/realms/flow-manager
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/flow-manager
 
   cloud:
     gateway:
@@ -19,6 +35,8 @@ spring:
               uri: lb://flow-manager
               predicates:
                 - Path=/api/files/**
+              filters:
+                - TokenRelay=
 
           globalcors:
             cors-configurations:
